@@ -1,0 +1,59 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "raycast-hashicorp-vault",
+  "title": "Hashicorp Vault",
+  "description": "",
+  "icon": "icon.png",
+  "author": "klassm",
+  "categories": [
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "listMetadata",
+      "title": "Vault",
+      "description": "",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "url",
+      "type": "textfield",
+      "title": "Vault URL",
+      "required": true,
+      "default": "",
+      "description": "URL to Vault"
+    },
+    {
+      "name": "token",
+      "type": "password",
+      "title": "Vault Token",
+      "required": true,
+      "default": "",
+      "description": "You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select \"Copy token\"."
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.39.3",
+    "lodash": "^4.17.21",
+    "node-vault": "^0.9.22"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.185",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "ray publish"
+  }
+}
