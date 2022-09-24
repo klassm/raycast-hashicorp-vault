@@ -1,10 +1,11 @@
 import { Action, ActionPanel, Cache, Color, getPreferenceValues, Icon, List, useNavigation } from "@raycast/api";
-import { sortBy, sum, uniq } from "lodash";
+import { countBy, keyBy, sortBy, sum, takeRight, uniq } from "lodash";
 import { useEffect, useState } from "react";
 import { listAll } from "../vault/listMetadata";
 import { CredentialsList } from "./CredentialsList";
 
 const cache = new Cache();
+const lastUsedCacheKey = "hashicorp-vault-metadata-last-used";
 export const { url } = getPreferenceValues();
 
 interface CacheData {
@@ -17,6 +18,27 @@ interface Metadata {
   keywords: string[];
   key: string;
   browserUrl: string;
+}
+
+function getLastUsedCache(): string[] {
+  return JSON.parse(cache.get(lastUsedCacheKey) ?? "[]");
+}
+
+function getMostUsed() {
+  const values = getLastUsedCache();
+  const countEntries = Object.entries(countBy(values));
+  const sortedEntries = sortBy(countEntries, (entry) => entry[1])
+    .reverse()
+    .map(([href]) => href);
+  return sortedEntries.slice(0, 20);
+}
+
+function updateLastUsed(key: string) {
+  const cachedEntries = getLastUsedCache();
+  const newEntries = [...cachedEntries, key];
+  const latestEntries = takeRight(newEntries, 100);
+
+  cache.set(lastUsedCacheKey, JSON.stringify(latestEntries));
 }
 
 function keywordsFor(key: string): string[] {
@@ -69,6 +91,9 @@ const getCachedData = async () => {
 const useData = () => {
   const [data, setData] = useState<Metadata[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState<Metadata[]>([]);
+
   useEffect(() => {
     setIsLoading(true);
     getCachedData()
@@ -77,7 +102,18 @@ const useData = () => {
     setIsLoading(false);
   }, []);
 
-  return { data, isLoading };
+  useEffect(() => {
+    if (searchText) {
+      setSearchResults(search(searchText, data));
+    } else {
+      const mostUsed = getMostUsed();
+      const byUrl = keyBy(data, (metadata) => metadata.key);
+      const filtered = mostUsed.map((href) => byUrl[href]).filter((metadata): metadata is Metadata => !!metadata);
+      setSearchResults(filtered);
+    }
+  }, [searchText, data]);
+
+  return { searchResults, setSearchText, isLoading };
 };
 
 const searchScoreFor = (queryParts: string[], metadata: Metadata): number => {
@@ -108,20 +144,12 @@ const search = (query: string, data: Metadata[]): Metadata[] => {
 };
 
 export function MetadataList() {
-  const { data, isLoading } = useData();
-  const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState<Metadata[]>([]);
-
-  useEffect(() => {
-    const results = search(searchText, data);
-    setSearchResults(results);
-  }, [searchText]);
+  const { setSearchText, searchResults, isLoading } = useData();
 
   return (
     <List
       isLoading={isLoading}
       enableFiltering={false}
-      searchText={searchText}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder="Search Vault..."
       throttle
@@ -149,11 +177,14 @@ function MetadataItem({ metadata }: { metadata: Metadata }) {
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser title="Open" url={metadata.browserUrl} />
+            <Action.OpenInBrowser onOpen={() => updateLastUsed(metadata.key)} title="Open" url={metadata.browserUrl} />
             <Action
               icon={{ source: Icon.Key, tintColor: Color.Red }}
               title="Credentials"
-              onAction={() => navigation.push(<CredentialsList metadataKey={metadata.key} />)}
+              onAction={() => {
+                updateLastUsed(metadata.key);
+                navigation.push(<CredentialsList metadataKey={metadata.key} />);
+              }}
             />
           </ActionPanel.Section>
         </ActionPanel>
