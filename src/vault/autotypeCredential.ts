@@ -1,5 +1,5 @@
 import process from "child_process";
-import { Credential } from "./listCredentials";
+import { Credential } from "../types/Credential";
 
 export function autotypeCredential({ username, password }: Credential) {
   process.execSync(`echo 'tell application "System Events" to keystroke "${username}"' | osascript`);

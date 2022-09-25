@@ -1,22 +1,10 @@
 import { Action, ActionPanel, closeMainWindow, Color, Icon, List } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { useCredentials } from "../hooks/useCredentials";
+import { Credential } from "../types/Credential";
 import { autotypeCredential } from "../vault/autotypeCredential";
-import { Credential, listCredentials } from "../vault/listCredentials";
-
-const useData = (key: string) => {
-  const [data, setData] = useState<Credential[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  useEffect(() => {
-    setIsLoading(true);
-    listCredentials(key).then(setData);
-    setIsLoading(false);
-  }, []);
-
-  return { data, isLoading };
-};
 
 export function CredentialsList({ metadataKey }: { metadataKey: string }) {
-  const { data, isLoading } = useData(metadataKey);
+  const { data, isLoading } = useCredentials(metadataKey);
 
   return (
     <List isLoading={isLoading} enableFiltering={true} searchBarPlaceholder="Search credentials..." throttle>

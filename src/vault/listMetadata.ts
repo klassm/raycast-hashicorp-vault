@@ -1,10 +1,31 @@
-import { getPreferenceValues } from "@raycast/api";
 import NodeVault from "node-vault";
-import nodeVault from "node-vault";
-import { groupBy } from "lodash";
+import { groupBy, uniq } from "lodash";
+import { url } from "../components/MetadataList";
+import { Config } from "../types/Config";
+import { Metadata } from "../types/Metadata";
+
+function keywordsFor(key: string): string[] {
+  const keyParts = key.toLowerCase().split("/");
+  return keyParts.flatMap((part) => {
+    const subParts = part.split(/[-_]/g);
+    const acronym = subParts.length >= 3 ? subParts.map((part) => part.charAt(0)).join("") : undefined;
+    return uniq([part, acronym, ...subParts].filter((it): it is string => !!it));
+  });
+}
+
+function metadataFrom(key: string): Metadata {
+  const optionParts = key.split("/");
+  const title = optionParts.slice(optionParts.length - 2).join(" ");
+  const browserUrl = `${url}/ui/vault/secrets/secret/show/${key}`;
+  return {
+    key,
+    title,
+    keywords: keywordsFor(key),
+    browserUrl,
+  };
+}
 
 async function listAllIn(path: string, vault: NodeVault.client): Promise<{ paths: string[]; secrets: string[] }> {
-  console.log(path);
   try {
     const result = await vault.list(`secret/metadata/${path}`);
     const collection = result.data.keys.map((key: string) => path + key);
@@ -19,23 +40,22 @@ async function listAllIn(path: string, vault: NodeVault.client): Promise<{ paths
   }
 }
 
-async function listMetadata(path = "", vault: NodeVault.client): Promise<string[]> {
+async function listMetadataForPath(path = "", vault: NodeVault.client): Promise<string[]> {
   const result = await listAllIn(path, vault);
   const secretsFromPaths = (
-    await Promise.all(result.paths.flatMap((foundPath: string) => listMetadata(foundPath, vault)))
+    await Promise.all(result.paths.flatMap((foundPath: string) => listMetadataForPath(foundPath, vault)))
   ).flatMap((it) => it);
   return [...secretsFromPaths, ...result.secrets];
 }
 
-export async function listAll(): Promise<string[]> {
-  const { url, token } = getPreferenceValues();
-
-  const vault = nodeVault({
+export async function listMetadata({ url, token }: Config): Promise<Metadata[]> {
+  const vault = NodeVault({
     apiVersion: "v1",
     endpoint: url,
     token: token,
     noCustomHTTPVerbs: true,
   });
 
-  return listMetadata("", vault);
+  const allMetadata = await listMetadataForPath("", vault);
+  return allMetadata.map(metadataFrom);
 }
