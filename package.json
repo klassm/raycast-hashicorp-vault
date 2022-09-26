@@ -12,8 +12,8 @@
   "commands": [
     {
       "name": "listMetadata",
-      "title": "Vault",
-      "description": "",
+      "title": "Search Vault",
+      "description": "Search Vault metadata and autotype or copy credentials.",
       "mode": "view"
     }
   ],
