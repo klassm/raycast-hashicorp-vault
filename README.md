@@ -7,4 +7,4 @@
 
 ## Installation
 
-Clone this repository and run `npm run dev`.
+Clone this repository and run `npm install && npm run dev`.

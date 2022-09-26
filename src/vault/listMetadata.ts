@@ -1,6 +1,5 @@
 import NodeVault from "node-vault";
 import { groupBy, uniq } from "lodash";
-import { url } from "../components/MetadataList";
 import { Config } from "../types/Config";
 import { Metadata } from "../types/Metadata";
 
@@ -13,10 +12,10 @@ function keywordsFor(key: string): string[] {
   });
 }
 
-function metadataFrom(key: string): Metadata {
+function metadataFrom(vaultUrl: string, key: string): Metadata {
   const optionParts = key.split("/");
   const title = optionParts.slice(optionParts.length - 2).join(" ");
-  const browserUrl = `${url}/ui/vault/secrets/secret/show/${key}`;
+  const browserUrl = `${vaultUrl}/ui/vault/secrets/secret/show/${key}`;
   return {
     key,
     title,
@@ -57,5 +56,5 @@ export async function listMetadata({ url, token }: Config): Promise<Metadata[]> 
   });
 
   const allMetadata = await listMetadataForPath("", vault);
-  return allMetadata.map(metadataFrom);
+  return allMetadata.map((metadata) => metadataFrom(url, metadata));
 }
