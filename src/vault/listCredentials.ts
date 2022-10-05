@@ -1,12 +1,6 @@
-import { getPreferenceValues } from "@raycast/api";
 import { groupBy } from "lodash";
-import NodeVault from "node-vault";
 import { Credential } from "../types/Credential";
-
-async function getValuesFor(key: string, vault: NodeVault.client) {
-  const result = await vault.read(`secret/data/${key}`);
-  return result.data.data;
-}
+import { listValues } from "./listValues";
 
 function valuesToCredentials(values: Record<string, unknown>): Credential[] {
   const stringValues = Object.entries(values).filter(
@@ -30,14 +24,6 @@ function valuesToCredentials(values: Record<string, unknown>): Credential[] {
 }
 
 export async function listCredentials(key: string): Promise<Credential[]> {
-  const { url, token } = getPreferenceValues();
-  const vault = NodeVault({
-    apiVersion: "v1",
-    endpoint: url,
-    token: token,
-    noCustomHTTPVerbs: true,
-  });
-
-  const values = await getValuesFor(key, vault);
+  const values = await listValues(key);
   return valuesToCredentials(values);
 }

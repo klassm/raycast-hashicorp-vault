@@ -2,6 +2,7 @@ import { Action, ActionPanel, Color, Icon, List, useNavigation } from "@raycast/
 import { useSearchMetadata } from "../hooks/useSearchMetadata";
 import { Metadata } from "../types/Metadata";
 import { CredentialsList } from "./CredentialsList";
+import { MetadataValues } from "./MetadataValues";
 
 export function MetadataList() {
   const { setQuery, searchResults, loading, updateMostUsed } = useSearchMetadata();
@@ -14,11 +15,9 @@ export function MetadataList() {
       searchBarPlaceholder="Search Vault..."
       throttle
     >
-      <List.Section title="Results">
-        {(searchResults ?? []).map((entry) => (
-          <MetadataItem key={entry.key} metadata={entry} updateMostUsed={() => updateMostUsed(entry)} />
-        ))}
-      </List.Section>
+      {(searchResults ?? []).map((entry) => (
+        <MetadataItem key={entry.key} metadata={entry} updateMostUsed={() => updateMostUsed(entry)} />
+      ))}
     </List>
   );
 }
@@ -44,6 +43,14 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
               onAction={() => {
                 updateMostUsed();
                 navigation.push(<CredentialsList metadataKey={metadata.key} />);
+              }}
+            />
+            <Action
+              icon={{ source: Icon.Bolt, tintColor: Color.Red }}
+              title="Values"
+              onAction={() => {
+                updateMostUsed();
+                navigation.push(<MetadataValues metadataKey={metadata.key} />);
               }}
             />
           </ActionPanel.Section>

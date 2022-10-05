@@ -8,11 +8,9 @@ export function CredentialsList({ metadataKey }: { metadataKey: string }) {
 
   return (
     <List isLoading={isLoading} enableFiltering={true} searchBarPlaceholder="Search credentials..." throttle>
-      <List.Section title="Results">
-        {(data ?? []).map((entry) => (
-          <MetadataItem key={entry.name} credential={entry} />
-        ))}
-      </List.Section>
+      {(data ?? []).map((entry) => (
+        <MetadataItem key={entry.name} credential={entry} />
+      ))}
     </List>
   );
 }
