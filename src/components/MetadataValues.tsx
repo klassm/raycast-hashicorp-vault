@@ -41,10 +41,13 @@ function ValueItem({ metadataKey, value }: { metadataKey: string; value: unknown
         <ActionPanel>
           <ActionPanel.Section>
             <Action.CopyToClipboard title="Copy" onCopy={() => showHUD("Copied")} content={JSON.stringify(value)} />
-            <Action title="Type" onAction={async () => {
-              await closeMainWindow()
-              autotype(stringify(value));
-            }} />
+            <Action
+              title="Type"
+              onAction={async () => {
+                await closeMainWindow();
+                autotype(stringify(value));
+              }}
+            />
           </ActionPanel.Section>
         </ActionPanel>
       }
