@@ -1,7 +1,7 @@
 import { Action, ActionPanel, closeMainWindow, Color, Icon, List } from "@raycast/api";
 import { useCredentials } from "../hooks/useCredentials";
 import { Credential } from "../types/Credential";
-import { autotypeCredential } from "../vault/autotypeCredential";
+import { autotypeCredential } from "../vault/autotype";
 
 export function CredentialsList({ metadataKey }: { metadataKey: string }) {
   const { data, isLoading } = useCredentials(metadataKey);

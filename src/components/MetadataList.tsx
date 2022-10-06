@@ -36,15 +36,6 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser onOpen={() => updateMostUsed()} title="Open" url={metadata.browserUrl} />
-            <Action
-              icon={{ source: Icon.Key, tintColor: Color.Red }}
-              title="Credentials"
-              onAction={() => {
-                updateMostUsed();
-                navigation.push(<CredentialsList metadataKey={metadata.key} />);
-              }}
-            />
             <Action
               icon={{ source: Icon.Bolt, tintColor: Color.Red }}
               title="Values"
@@ -53,6 +44,15 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
                 navigation.push(<MetadataValues metadataKey={metadata.key} />);
               }}
             />
+            <Action
+              icon={{ source: Icon.Key, tintColor: Color.Red }}
+              title="Credentials"
+              onAction={() => {
+                updateMostUsed();
+                navigation.push(<CredentialsList metadataKey={metadata.key} />);
+              }}
+            />
+            <Action.OpenInBrowser onOpen={() => updateMostUsed()} title="Open" url={metadata.browserUrl} />
           </ActionPanel.Section>
         </ActionPanel>
       }
