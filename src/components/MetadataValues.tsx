@@ -1,10 +1,11 @@
 import { Action, ActionPanel, closeMainWindow, Color, Icon, List, showHUD } from "@raycast/api";
 import { FC, useMemo } from "react";
 import { useValues } from "../hooks/useValues";
+import { Metadata } from "../types/Metadata";
 import { autotype } from "../vault/autotype";
 
 interface MetadataValuesProps {
-  metadataKey: string;
+  metadata: Metadata;
 }
 
 function stringify(value: unknown): string {
@@ -15,24 +16,24 @@ function stringify(value: unknown): string {
 function jsonToMarkdown(value: unknown): string {
   return "```\n" + stringify(value) + "\n```";
 }
-export const MetadataValues: FC<MetadataValuesProps> = ({ metadataKey }) => {
-  const { values, loading } = useValues(metadataKey);
+export const MetadataValues: FC<MetadataValuesProps> = ({ metadata }) => {
+  const { values, loading } = useValues(metadata.key);
   const mapped = useMemo(() => Object.entries(values), [values]);
 
   return (
     <List isLoading={loading} enableFiltering={true} searchBarPlaceholder="Values ..." throttle isShowingDetail={true}>
       {(mapped ?? []).map(([key, value]) => (
-        <ValueItem metadataKey={key} value={value} />
+        <ValueItem key={key} metadata={metadata} itemKey={key} itemValue={value} />
       ))}
     </List>
   );
 };
 
-function ValueItem({ metadataKey, value }: { metadataKey: string; value: unknown }) {
+function ValueItem({ metadata, itemKey, itemValue }: { itemKey: string; metadata: Metadata; itemValue: unknown }) {
   return (
     <List.Item
-      title={metadataKey}
-      detail={<List.Item.Detail markdown={jsonToMarkdown(value)} />}
+      title={itemKey}
+      detail={<List.Item.Detail markdown={jsonToMarkdown(itemValue)} />}
       icon={{
         source: Icon.Bolt,
         tintColor: Color.Brown,
@@ -40,13 +41,19 @@ function ValueItem({ metadataKey, value }: { metadataKey: string; value: unknown
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.CopyToClipboard title="Copy" onCopy={() => showHUD("Copied")} content={JSON.stringify(value)} />
+            <Action.CopyToClipboard title="Copy" onCopy={() => showHUD("Copied")} content={JSON.stringify(itemValue)} />
             <Action
+              icon={{ source: Icon.Key, tintColor: Color.Red }}
               title="Type"
               onAction={async () => {
                 await closeMainWindow();
-                autotype(stringify(value));
+                autotype(stringify(itemValue));
               }}
+            />
+            <Action.OpenInBrowser
+              icon={{ source: Icon.Link, tintColor: Color.Blue }}
+              url={metadata.browserUrl}
+              title="Open"
             />
           </ActionPanel.Section>
         </ActionPanel>

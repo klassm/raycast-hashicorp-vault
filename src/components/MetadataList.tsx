@@ -41,7 +41,7 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
               title="Values"
               onAction={() => {
                 updateMostUsed();
-                navigation.push(<MetadataValues metadataKey={metadata.key} />);
+                navigation.push(<MetadataValues metadata={metadata} />);
               }}
             />
             <Action
@@ -49,7 +49,7 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
               title="Credentials"
               onAction={() => {
                 updateMostUsed();
-                navigation.push(<CredentialsList metadataKey={metadata.key} />);
+                navigation.push(<CredentialsList metadata={metadata} />);
               }}
             />
             <Action.OpenInBrowser onOpen={() => updateMostUsed()} title="Open" url={metadata.browserUrl} />
