@@ -41,7 +41,7 @@ function ValueItem({ metadata, itemKey, itemValue }: { itemKey: string; metadata
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.CopyToClipboard title="Copy" onCopy={() => showHUD("Copied")} content={JSON.stringify(itemValue)} />
+            <Action.CopyToClipboard title="Copy" onCopy={() => showHUD("Copied")} content={stringify(itemValue)} />
             <Action
               icon={{ source: Icon.Key, tintColor: Color.Red }}
               title="Type"
