@@ -10,7 +10,7 @@ export function MetadataList() {
   return (
     <List
       isLoading={loading}
-      enableFiltering={false}
+      filtering={false}
       onSearchTextChange={setQuery}
       searchBarPlaceholder="Search Vault..."
       throttle

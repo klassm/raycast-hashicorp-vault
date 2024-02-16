@@ -4,7 +4,7 @@ import { listValues } from "./listValues";
 
 function valuesToCredentials(values: Record<string, unknown>): Credential[] {
   const stringValues = Object.entries(values).filter(
-    (array): array is [string, string] => typeof array[1] === "string"
+    (array): array is [string, string] => typeof array[1] === "string",
   );
   const groups = groupBy(stringValues, ([key]) => key.replace(/user(name)?/i, "").replace(/pass(word)?/i, ""));
   const credentials = Object.values(groups).filter((group) => group.length === 2);

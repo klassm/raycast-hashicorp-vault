@@ -1,5 +1,5 @@
-import NodeVault from "node-vault";
 import { groupBy, uniq } from "lodash";
+import NodeVault from "node-vault";
 import { Config } from "../types/Config";
 import { Metadata } from "../types/Metadata";
 
@@ -54,7 +54,6 @@ export async function listMetadata({ url, token }: Config): Promise<Metadata[]> 
     token: token,
     noCustomHTTPVerbs: true,
   });
-
   const allMetadata = await listMetadataForPath("", vault);
   return allMetadata.map((metadata) => metadataFrom(url, metadata));
 }
