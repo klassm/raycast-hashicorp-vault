@@ -8,7 +8,7 @@ export function CredentialsList({ metadata }: { metadata: Metadata }) {
   const { data, isLoading } = useCredentials(metadata.key);
 
   return (
-    <List isLoading={isLoading} enableFiltering={true} searchBarPlaceholder="Search credentials..." throttle>
+    <List isLoading={isLoading} filtering searchBarPlaceholder="Search credentials..." throttle>
       {(data ?? []).map((entry) => (
         <MetadataItem key={entry.name} credential={entry} metadata={metadata} />
       ))}
