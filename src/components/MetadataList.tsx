@@ -5,7 +5,7 @@ import { CredentialsList } from "./CredentialsList";
 import { MetadataValues } from "./MetadataValues";
 
 export function MetadataList() {
-  const { setQuery, searchResults, loading, updateMostUsed } = useSearchMetadata();
+  const { setQuery, searchResults, loading, updateMostUsed, reload } = useSearchMetadata();
 
   return (
     <List
@@ -16,13 +16,21 @@ export function MetadataList() {
       throttle
     >
       {(searchResults ?? []).map((entry) => (
-        <MetadataItem key={entry.key} metadata={entry} updateMostUsed={() => updateMostUsed(entry)} />
+        <MetadataItem key={entry.key} metadata={entry} updateMostUsed={() => updateMostUsed(entry)} reload={reload} />
       ))}
     </List>
   );
 }
 
-function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; updateMostUsed: () => void }) {
+function MetadataItem({
+  metadata,
+  updateMostUsed,
+  reload,
+}: {
+  metadata: Metadata;
+  updateMostUsed: () => void;
+  reload: () => void;
+}) {
   const navigation = useNavigation();
   return (
     <List.Item
@@ -50,6 +58,13 @@ function MetadataItem({ metadata, updateMostUsed }: { metadata: Metadata; update
               onAction={() => {
                 updateMostUsed();
                 navigation.push(<CredentialsList metadata={metadata} />);
+              }}
+            />
+            <Action
+              icon={{ source: Icon.Download, tintColor: Color.Blue }}
+              title="Reload"
+              onAction={() => {
+                reload();
               }}
             />
             <Action.OpenInBrowser onOpen={() => updateMostUsed()} title="Open" url={metadata.browserUrl} />

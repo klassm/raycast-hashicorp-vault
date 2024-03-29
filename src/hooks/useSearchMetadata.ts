@@ -32,7 +32,7 @@ const search = (query: string, data: Metadata[]): Metadata[] => {
 };
 
 export function useSearchMetadata() {
-  const { repositories = [], loading } = useMetadata();
+  const { repositories = [], loading, reload } = useMetadata();
   const [searchResults, setSearchResults] = useState<Metadata[]>([]);
   const [query, setQuery] = useState("");
   const { mostUsed, add: updateMostUsed } = useMostUsed();
@@ -48,5 +48,5 @@ export function useSearchMetadata() {
     }
   }, [query, repositories, loading]);
 
-  return { loading, searchResults, setQuery, updateMostUsed };
+  return { loading, searchResults, setQuery, updateMostUsed, reload };
 }
