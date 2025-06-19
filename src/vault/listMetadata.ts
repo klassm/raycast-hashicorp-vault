@@ -15,7 +15,7 @@ function keywordsFor(key: string): string[] {
 function metadataFrom(vaultUrl: string, key: string): Metadata {
   const optionParts = key.split("/");
   const title = optionParts.slice(optionParts.length - 2).join(" ");
-  const browserUrl = `${vaultUrl}/ui/vault/secrets/secret/show/${key}`;
+  const browserUrl = `${vaultUrl}/ui/vault/secrets/secret/kv/${encodeURIComponent(key)}/details`;
   return {
     key,
     title,
@@ -23,6 +23,8 @@ function metadataFrom(vaultUrl: string, key: string): Metadata {
     browserUrl,
   };
 }
+// https://vault.srv.reu.bsh-lando.com/ui/vault/secrets/secret/kv/content-annotations%2Fruntime%2Fannotation-service%2FGLOBAL-STG/details
+// https://vault.srv.reu.bsh-lando.com/ui/vault/secrets/secret/show/content-annotations%2Fruntime%2Fannotation-service%2FGLOBAL-STG/details
 
 async function listAllIn(path: string, vault: NodeVault.client): Promise<{ paths: string[]; secrets: string[] }> {
   try {
