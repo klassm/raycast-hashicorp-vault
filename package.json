@@ -88,19 +88,15 @@
     "node-vault": "^0.10.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.2",
     "@types/lodash": "^4.17.0",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.5",
     "typescript": "^5.4.3"
   },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
-    "fix-lint": "ray lint --fix",
-    "lint": "ray lint",
-    "publish": "ray publish"
+    "publish": "ray publish",
+    "lint": "biome check .",
+    "format": "biome check . --write --unsafe && biome format . --write"
   }
 }

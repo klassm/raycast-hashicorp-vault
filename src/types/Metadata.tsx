@@ -1,6 +1,6 @@
 export interface Metadata {
-  title: string;
-  keywords: string[];
-  key: string;
-  browserUrl: string;
+	title: string;
+	keywords: string[];
+	key: string;
+	browserUrl: string;
 }

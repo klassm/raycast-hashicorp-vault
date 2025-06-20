@@ -1,0 +1,13 @@
+{
+	"files": {
+		"includes": ["src/**/*.ts", "src/**/*.tsx"]
+	},
+	"linter": {
+		"rules": {
+			"nursery": {}
+		}
+	},
+	"formatter": {
+		"enabled": true
+	}
+}

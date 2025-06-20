@@ -1,5 +1,5 @@
 export interface Config {
-  token: string;
-  url: string;
-  cacheDays: number;
+	token: string;
+	url: string;
+	cacheDays: number;
 }
