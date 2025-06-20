@@ -1,102 +1,103 @@
 {
-  "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "raycast-hashicorp-vault",
-  "title": "Hashicorp Vault",
-  "description": "Plugin to read and list Vault data",
-  "icon": "icon.png",
-  "author": "klassm",
-  "categories": [
-    "Developer Tools"
-  ],
-  "license": "MIT",
-  "commands": [
-    {
-      "name": "listMetadata",
-      "title": "Search Vault",
-      "description": "Search Vault metadata and autotype or copy credentials.",
-      "mode": "view"
-    }
-  ],
-  "preferences": [
-    {
-      "name": "url",
-      "type": "textfield",
-      "title": "Vault URL",
-      "required": true,
-      "default": "",
-      "description": "URL to Vault"
-    },
-    {
-      "name": "token",
-      "type": "password",
-      "title": "Vault Token",
-      "required": true,
-      "default": "",
-      "description": "You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select \"Copy token\"."
-    },
-    {
-      "name": "cacheDays",
-      "type": "dropdown",
-      "data": [
-        {
-          "title": "1 day",
-          "value": "1"
-        },
-        {
-          "title": "2 days",
-          "value": "2"
-        },
-        {
-          "title": "3 days",
-          "value": "3"
-        },
-        {
-          "title": "4 days",
-          "value": "4"
-        },
-        {
-          "title": "5 days",
-          "value": "5"
-        },
-        {
-          "title": "10 days",
-          "value": "10"
-        },
-        {
-          "title": "30 days",
-          "value": "30"
-        },
-        {
-          "title": "50 days",
-          "value": "50"
-        },
-        {
-          "title": "100 days",
-          "value": "500"
-        }
-      ],
-      "placeholder": "Cache Days",
-      "default": "3",
-      "title": "Cache Days",
-      "required": false,
-      "description": "Number of days to cache the metadata keys."
-    }
-  ],
-  "dependencies": {
-    "@raycast/api": "^1.70.3",
-    "lodash": "^4.17.21",
-    "node-vault": "^0.10.2"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.0.2",
-    "@types/lodash": "^4.17.0",
-    "typescript": "^5.4.3"
-  },
-  "scripts": {
-    "build": "ray build -e dist",
-    "dev": "ray develop",
-    "publish": "ray publish",
-    "lint": "biome check .",
-    "format": "biome check . --write --unsafe && biome format . --write"
-  }
+	"$schema": "https://www.raycast.com/schemas/extension.json",
+	"name": "raycast-hashicorp-vault",
+	"title": "Hashicorp Vault",
+	"description": "Plugin to read and list Vault data",
+	"icon": "icon.png",
+	"author": "klassm",
+	"categories": [
+		"Developer Tools"
+	],
+	"license": "MIT",
+	"commands": [
+		{
+			"name": "listMetadata",
+			"title": "Search Vault",
+			"description": "Search Vault metadata and autotype or copy credentials.",
+			"mode": "view"
+		}
+	],
+	"preferences": [
+		{
+			"name": "url",
+			"type": "textfield",
+			"title": "Vault URL",
+			"required": true,
+			"default": "",
+			"description": "URL to Vault"
+		},
+		{
+			"name": "token",
+			"type": "password",
+			"title": "Vault Token",
+			"required": true,
+			"default": "",
+			"description": "You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select \"Copy token\"."
+		},
+		{
+			"name": "cacheDays",
+			"type": "dropdown",
+			"data": [
+				{
+					"title": "1 day",
+					"value": "1"
+				},
+				{
+					"title": "2 days",
+					"value": "2"
+				},
+				{
+					"title": "3 days",
+					"value": "3"
+				},
+				{
+					"title": "4 days",
+					"value": "4"
+				},
+				{
+					"title": "5 days",
+					"value": "5"
+				},
+				{
+					"title": "10 days",
+					"value": "10"
+				},
+				{
+					"title": "30 days",
+					"value": "30"
+				},
+				{
+					"title": "50 days",
+					"value": "50"
+				},
+				{
+					"title": "100 days",
+					"value": "500"
+				}
+			],
+			"placeholder": "Cache Days",
+			"default": "3",
+			"title": "Cache Days",
+			"required": false,
+			"description": "Number of days to cache the metadata keys."
+		}
+	],
+	"dependencies": {
+		"@raycast/api": "^1.70.3",
+		"lodash": "^4.17.21",
+		"node-vault": "^0.10.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.0.2",
+		"@types/lodash": "^4.17.0",
+		"typescript": "^5.4.3"
+	},
+	"scripts": {
+		"build": "ray build -e dist",
+		"dev": "ray develop",
+		"publish": "ray publish",
+		"lint": "biome check .",
+		"format": "biome check . --write --unsafe && biome format . --write",
+		"postinstall": "chmod +x ./node_modules/@biomejs/cli-*/biome || true"
+	}
 }
