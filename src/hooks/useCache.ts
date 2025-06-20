@@ -54,7 +54,7 @@ export function useCache<T>(key: string, provider: CacheProvider<T>, options: Ca
         })
         .finally(() => setLoading(false));
     },
-    [loadData, setLoading]
+    [loadData, setLoading],
   );
 
   const update = useMemo(
@@ -62,7 +62,7 @@ export function useCache<T>(key: string, provider: CacheProvider<T>, options: Ca
       updateData(key, newData);
       reloadData();
     },
-    [updateData, reloadData]
+    [updateData, reloadData],
   );
   useEffect(() => {
     const now = new Date().getTime();
@@ -76,6 +76,6 @@ export function useCache<T>(key: string, provider: CacheProvider<T>, options: Ca
     data: data?.data,
     loading,
     update,
-    reload: reloadData
+    reload: reloadData,
   };
 }
