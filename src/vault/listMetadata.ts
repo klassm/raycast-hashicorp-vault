@@ -2,6 +2,7 @@ import { groupBy, uniq } from "lodash";
 import NodeVault from "node-vault";
 import type { Config } from "../types/Config";
 import type { Metadata } from "../types/Metadata";
+import { resolveVaultToken } from "./token";
 
 function keywordsFor(key: string): string[] {
 	const keyParts = key.toLowerCase().split("/");
@@ -66,10 +67,8 @@ async function listMetadataForPath(
 	return [...secretsFromPaths, ...result.secrets];
 }
 
-export async function listMetadata({
-	url,
-	token,
-}: Config): Promise<Metadata[]> {
+export async function listMetadata({ url }: Config): Promise<Metadata[]> {
+	const token = await resolveVaultToken();
 	const vault = NodeVault({
 		apiVersion: "v1",
 		endpoint: url,

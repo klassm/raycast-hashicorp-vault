@@ -10,8 +10,14 @@
 type ExtensionPreferences = {
   /** Vault URL - URL to Vault */
   "url": string,
-  /** Vault Token - You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select "Copy token". */
+  /** Token Source - Where the Vault token is read from: Raycast preferences or a macOS Keychain item. */
+  "tokenSource": "preferences" | "keychain",
+  /** Vault Token - Only used when Token Source is "Raycast Preferences". You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select "Copy token". */
   "token": string,
+  /** Keychain Service - Only used when Token Source is "macOS Keychain". Service name of the keychain item. Create it with: security add-generic-password -s <service> -a <account> -U -w */
+  "keychainService": string,
+  /** Keychain Account - Only used when Token Source is "macOS Keychain". Optional account name of the keychain item. Leave empty to match any account under the service. */
+  "keychainAccount": string,
   /** Cache Days - Number of days to cache the metadata keys. */
   "cacheDays": "1" | "2" | "3" | "4" | "5" | "10" | "30" | "50" | "500"
 }

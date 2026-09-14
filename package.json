@@ -27,12 +27,46 @@
 			"description": "URL to Vault"
 		},
 		{
+			"name": "tokenSource",
+			"type": "dropdown",
+			"title": "Token Source",
+			"required": true,
+			"default": "preferences",
+			"description": "Where the Vault token is read from: Raycast preferences or a macOS Keychain item.",
+			"data": [
+				{
+					"title": "Raycast Preferences",
+					"value": "preferences"
+				},
+				{
+					"title": "macOS Keychain",
+					"value": "keychain"
+				}
+			]
+		},
+		{
 			"name": "token",
 			"type": "password",
 			"title": "Vault Token",
-			"required": true,
+			"required": false,
 			"default": "",
-			"description": "You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select \"Copy token\"."
+			"description": "Only used when Token Source is \"Raycast Preferences\". You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select \"Copy token\"."
+		},
+		{
+			"name": "keychainService",
+			"type": "textfield",
+			"title": "Keychain Service",
+			"required": false,
+			"default": "hashicorp-vault",
+			"description": "Only used when Token Source is \"macOS Keychain\". Service name of the keychain item. Create it with: security add-generic-password -s <service> -a <account> -U -w"
+		},
+		{
+			"name": "keychainAccount",
+			"type": "textfield",
+			"title": "Keychain Account",
+			"required": false,
+			"default": "",
+			"description": "Only used when Token Source is \"macOS Keychain\". Optional account name of the keychain item. Leave empty to match any account under the service."
 		},
 		{
 			"name": "cacheDays",

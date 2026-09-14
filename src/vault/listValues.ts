@@ -1,5 +1,6 @@
-import { getPreferenceValues } from "@raycast/api";
 import NodeVault from "node-vault";
+import type { Config } from "../types/Config";
+import { resolveVaultToken } from "./token";
 
 async function getValuesFor(key: string, vault: NodeVault.client) {
 	const result = await vault.read(`secret/data/${key}`);
@@ -8,8 +9,9 @@ async function getValuesFor(key: string, vault: NodeVault.client) {
 
 export async function listValues(
 	key: string,
+	{ url }: Config,
 ): Promise<Record<string, unknown>> {
-	const { url, token } = getPreferenceValues();
+	const token = await resolveVaultToken();
 	const vault = NodeVault({
 		apiVersion: "v1",
 		endpoint: url,
