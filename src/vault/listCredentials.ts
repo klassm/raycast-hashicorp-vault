@@ -1,4 +1,5 @@
 import { groupBy } from "lodash";
+import type { Config } from "../types/Config";
 import type { Credential } from "../types/Credential";
 import { listValues } from "./listValues";
 
@@ -35,7 +36,10 @@ function valuesToCredentials(values: Record<string, unknown>): Credential[] {
 		.filter((it): it is Credential => it !== undefined);
 }
 
-export async function listCredentials(key: string): Promise<Credential[]> {
-	const values = await listValues(key);
+export async function listCredentials(
+	key: string,
+	config: Config,
+): Promise<Credential[]> {
+	const values = await listValues(key, config);
 	return valuesToCredentials(values);
 }

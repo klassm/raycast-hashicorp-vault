@@ -4,12 +4,12 @@ import { listValues } from "../vault/listValues";
 import { useConfig } from "./useConfig";
 
 export function useValues(metadataKey: string) {
-	const { url } = useConfig();
+	const config = useConfig();
 	const [loading, setLoading] = useState(false);
 	const [values, setValues] = useState<Record<string, unknown>>({});
 	useEffect(() => {
 		setLoading(true);
-		listValues(metadataKey, { url })
+		listValues(metadataKey, config)
 			.then(setValues)
 			.catch(async (error) => {
 				await showToast({
