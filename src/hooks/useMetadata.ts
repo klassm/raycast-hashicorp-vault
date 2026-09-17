@@ -5,7 +5,7 @@ import { useConfig } from "./useConfig";
 export function useMetadata() {
 	const config = useConfig();
 	const { data, loading, reload } = useCache(
-		"vault-metadata",
+		`vault-metadata-${config.indexPaths.join(",")}`,
 		async () => {
 			return listMetadata(config);
 		},

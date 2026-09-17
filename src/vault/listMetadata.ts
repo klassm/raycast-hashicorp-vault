@@ -67,7 +67,10 @@ async function listMetadataForPath(
 	return [...secretsFromPaths, ...result.secrets];
 }
 
-export async function listMetadata({ url }: Config): Promise<Metadata[]> {
+export async function listMetadata({
+	url,
+	indexPaths,
+}: Config): Promise<Metadata[]> {
 	const token = await resolveVaultToken();
 	const vault = NodeVault({
 		apiVersion: "v1",
@@ -75,6 +78,14 @@ export async function listMetadata({ url }: Config): Promise<Metadata[]> {
 		token: token,
 		noCustomHTTPVerbs: true,
 	});
-	const allMetadata = await listMetadataForPath("", vault);
+	const roots =
+		indexPaths.length > 0
+			? indexPaths.map(
+					(path) => `${path.replace(/^\/+/, "").replace(/\/+$/, "")}/`,
+				)
+			: [""];
+	const allMetadata = (
+		await Promise.all(roots.map((root) => listMetadataForPath(root, vault)))
+	).flat();
 	return allMetadata.map((metadata) => metadataFrom(url, metadata));
 }

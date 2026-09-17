@@ -69,6 +69,14 @@
 			"description": "Only used when Token Source is \"macOS Keychain\". Optional account name of the keychain item. Leave empty to match any account under the service."
 		},
 		{
+			"name": "indexPaths",
+			"type": "textfield",
+			"title": "Index Paths",
+			"required": false,
+			"default": "",
+			"description": "Optional comma-separated path prefixes to index, e.g. \"team-a/,infra/prod\". Leave empty to index the whole vault recursively."
+		},
+		{
 			"name": "cacheDays",
 			"type": "dropdown",
 			"data": [

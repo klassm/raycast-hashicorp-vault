@@ -18,6 +18,8 @@ type ExtensionPreferences = {
   "keychainService": string,
   /** Keychain Account - Only used when Token Source is "macOS Keychain". Optional account name of the keychain item. Leave empty to match any account under the service. */
   "keychainAccount": string,
+  /** Index Paths - Optional comma-separated path prefixes to index, e.g. "team-a/,infra/prod". Leave empty to index the whole vault recursively. */
+  "indexPaths": string,
   /** Cache Days - Number of days to cache the metadata keys. */
   "cacheDays": "1" | "2" | "3" | "4" | "5" | "10" | "30" | "50" | "500"
 }
