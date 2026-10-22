@@ -1,39 +1,37 @@
-import { groupBy } from "lodash";
 import type { Config } from "../types/Config";
 import type { Credential } from "../types/Credential";
 import { listValues } from "./listValues";
 
 function valuesToCredentials(values: Record<string, unknown>): Credential[] {
 	const stringValues = Object.entries(values).filter(
-		(array): array is [string, string] => typeof array[1] === "string",
+		(entry): entry is [string, string] => typeof entry[1] === "string",
 	);
-	const groups = groupBy(stringValues, ([key]) =>
-		key.replace(/user(name)?/i, "").replace(/pass(word)?/i, ""),
-	);
-	const credentials = Object.values(groups).filter(
-		(group) => group.length === 2,
-	);
-	return credentials
-		.map((values): Credential | undefined => {
-			const userValues = values.find(([key]) =>
-				key.toLowerCase().includes("user"),
-			);
-			const passwordValues = values.find(([key]) =>
-				key.toLowerCase().includes("pass"),
-			);
-
-			const name: string = (userValues?.[0] ?? "")
-				.replace(/user(name)?/i, "")
-				.replace(/_$/, "");
-			const username = userValues?.[1];
-			const password = passwordValues?.[1];
-			return username !== undefined &&
-				password !== undefined &&
-				name !== undefined
-				? { name, username, password }
-				: undefined;
-		})
-		.filter((it): it is Credential => it !== undefined);
+	const groups = new Map<string, [string, string][]>();
+	for (const entry of stringValues) {
+		const groupKey = entry[0]
+			.replace(/user(name)?/i, "")
+			.replace(/pass(word)?/i, "");
+		const group = groups.get(groupKey);
+		if (group) {
+			group.push(entry);
+		} else {
+			groups.set(groupKey, [entry]);
+		}
+	}
+	return [...groups.values()].flatMap((group) => {
+		if (group.length !== 2) {
+			return [];
+		}
+		const userEntry = group.find(([key]) => key.toLowerCase().includes("user"));
+		const passwordEntry = group.find(([key]) =>
+			key.toLowerCase().includes("pass"),
+		);
+		if (!userEntry || !passwordEntry) {
+			return [];
+		}
+		const name = userEntry[0].replace(/user(name)?/i, "").replace(/_$/, "");
+		return [{ name, username: userEntry[1], password: passwordEntry[1] }];
+	});
 }
 
 export async function listCredentials(

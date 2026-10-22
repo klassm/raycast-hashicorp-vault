@@ -5,6 +5,8 @@ import {
 	closeMainWindow,
 	Icon,
 	List,
+	showToast,
+	Toast,
 } from "@raycast/api";
 import { useCredentials } from "../hooks/useCredentials";
 import type { Credential } from "../types/Credential";
@@ -21,23 +23,35 @@ export function CredentialsList({ metadata }: { metadata: Metadata }) {
 			searchBarPlaceholder="Search credentials..."
 			throttle
 		>
-			{(data ?? []).map((entry) => (
-				<MetadataItem key={entry.name} credential={entry} metadata={metadata} />
+			{data.map((entry, index) => (
+				<CredentialItem
+					key={`${index}-${entry.name}`}
+					credential={entry}
+					metadata={metadata}
+				/>
 			))}
 		</List>
 	);
 }
 
-function MetadataItem({
+function CredentialItem({
 	credential,
 	metadata,
 }: {
 	credential: Credential;
 	metadata: Metadata;
 }) {
-	const autotype = async () => {
+	const typeCredential = async () => {
 		await closeMainWindow();
-		autotypeCredential(credential);
+		try {
+			await autotypeCredential(credential);
+		} catch (error) {
+			await showToast({
+				style: Toast.Style.Failure,
+				title: "Autotype failed",
+				message: error instanceof Error ? error.message : String(error),
+			});
+		}
 	};
 	return (
 		<List.Item
@@ -52,7 +66,15 @@ function MetadataItem({
 						<Action
 							icon={{ source: Icon.Key, tintColor: Color.Red }}
 							title="Type"
-							onAction={autotype}
+							onAction={typeCredential}
+						/>
+						<Action.CopyToClipboard
+							title="Copy Username"
+							content={credential.username}
+						/>
+						<Action.CopyToClipboard
+							title="Copy Password"
+							content={credential.password}
 						/>
 						<Action.OpenInBrowser
 							icon={{ source: Icon.Link, tintColor: Color.Red }}

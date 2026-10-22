@@ -23,7 +23,7 @@ export function MetadataList() {
 			searchBarPlaceholder="Search Vault..."
 			throttle
 		>
-			{(searchResults ?? []).map((entry) => (
+			{searchResults.map((entry) => (
 				<MetadataItem
 					key={entry.key}
 					metadata={entry}

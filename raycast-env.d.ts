@@ -8,8 +8,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 type ExtensionPreferences = {
-  /** Vault URL - URL to Vault */
+  /** Vault URL - URL to Vault, e.g. https://vault.example.com */
   "url": string,
+  /** KV Mount - Name of the KV v2 secrets engine mount. Leave default if Vault was set up with the common "secret" mount. */
+  "mount": string,
   /** Token Source - Where the Vault token is read from: Raycast preferences or a macOS Keychain item. */
   "tokenSource": "preferences" | "keychain",
   /** Vault Token - Only used when Token Source is "Raycast Preferences". You can obtain a token by clicking on the user icon in the top right corner after logging in to Vault. Then select "Copy token". */
@@ -21,7 +23,7 @@ type ExtensionPreferences = {
   /** Index Paths - Optional comma-separated path prefixes to index, e.g. "team-a/,infra/prod". Leave empty to index the whole vault recursively. */
   "indexPaths": string,
   /** Cache Days - Number of days to cache the metadata keys. */
-  "cacheDays": "1" | "2" | "3" | "4" | "5" | "10" | "30" | "50" | "500"
+  "cacheDays": "1" | "2" | "3" | "4" | "5" | "10" | "30" | "50" | "100"
 }
 
 /** Preferences accessible in all the extension's commands */

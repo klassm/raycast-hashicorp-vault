@@ -6,6 +6,8 @@ import {
 	Icon,
 	List,
 	showHUD,
+	showToast,
+	Toast,
 } from "@raycast/api";
 import { type FC, useMemo } from "react";
 import { useValues } from "../hooks/useValues";
@@ -17,28 +19,27 @@ interface MetadataValuesProps {
 }
 
 function stringify(value: unknown): string {
-	const stringify = JSON.stringify(value, undefined, 2);
-	return stringify.startsWith('"') && stringify.endsWith('"')
-		? stringify.slice(1, -1)
-		: stringify;
+	return typeof value === "string"
+		? value
+		: JSON.stringify(value, undefined, 2);
 }
 
 function jsonToMarkdown(value: unknown): string {
 	return `\`\`\`\n${stringify(value)}\n\`\`\``;
 }
 export const MetadataValues: FC<MetadataValuesProps> = ({ metadata }) => {
-	const { values, loading } = useValues(metadata.key);
+	const { data: values, isLoading } = useValues(metadata.key);
 	const mapped = useMemo(() => Object.entries(values), [values]);
 
 	return (
 		<List
-			isLoading={loading}
+			isLoading={isLoading}
 			enableFiltering={true}
 			searchBarPlaceholder="Values ..."
 			throttle
 			isShowingDetail={true}
 		>
-			{(mapped ?? []).map(([key, value]) => (
+			{mapped.map(([key, value]) => (
 				<ValueItem
 					key={key}
 					metadata={metadata}
@@ -80,7 +81,16 @@ function ValueItem({
 							title="Type"
 							onAction={async () => {
 								await closeMainWindow();
-								autotype(stringify(itemValue));
+								try {
+									await autotype(stringify(itemValue));
+								} catch (error) {
+									await showToast({
+										style: Toast.Style.Failure,
+										title: "Autotype failed",
+										message:
+											error instanceof Error ? error.message : String(error),
+									});
+								}
 							}}
 						/>
 						<Action.OpenInBrowser

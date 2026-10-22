@@ -1,26 +1,18 @@
-import { showToast, Toast } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import type { Credential } from "../types/Credential";
 import { listCredentials } from "../vault/listCredentials";
 import { useConfig } from "./useConfig";
+import { useVaultData } from "./useVaultData";
+
+const NO_CREDENTIALS: Credential[] = [];
 
 export function useCredentials(key: string) {
 	const config = useConfig();
-	const [data, setData] = useState<Credential[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	useEffect(() => {
-		setIsLoading(true);
-		listCredentials(key, config)
-			.then(setData)
-			.catch(async (error) => {
-				await showToast({
-					style: Toast.Style.Failure,
-					title: "Loading credentials failed",
-					message: error instanceof Error ? error.message : undefined,
-				});
-			})
-			.finally(() => setIsLoading(false));
-	}, []);
-
-	return { data, isLoading };
+	const loader = useCallback(() => listCredentials(key, config), [key, config]);
+	return useVaultData(
+		key,
+		loader,
+		NO_CREDENTIALS,
+		"Loading credentials failed",
+	);
 }

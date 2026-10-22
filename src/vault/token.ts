@@ -14,17 +14,21 @@ interface TokenPreferences {
 const DEFAULT_SERVICE = "hashicorp-vault";
 const HEX_PATTERN = /^[0-9a-fA-F]+$/;
 const PRINTABLE_ASCII = /^[\x20-\x7E]+$/;
+const VAULT_TOKEN_PATTERN = /^(hvs|s)\./;
 
 /**
  * macOS 26 (Tahoe) hex-encodes `security ... -w` output for secrets containing
  * non-ASCII characters. Detect that case and decode back to UTF-8.
+ * Real Vault tokens (hvs./s. prefix) are never hex, so skip them to avoid
+ * mangling a token that happens to look like hex.
  */
 function decodeKeychainOutput(output: string): string {
 	const trimmed = output.trim();
 	if (
 		trimmed.length >= 32 &&
 		trimmed.length % 2 === 0 &&
-		HEX_PATTERN.test(trimmed)
+		HEX_PATTERN.test(trimmed) &&
+		!VAULT_TOKEN_PATTERN.test(trimmed)
 	) {
 		const decoded = Buffer.from(trimmed, "hex").toString("utf8");
 		if (PRINTABLE_ASCII.test(decoded)) {
@@ -65,27 +69,32 @@ async function readTokenFromKeychain(
 	}
 }
 
-export async function resolveVaultToken(): Promise<string> {
-	const { tokenSource, token, keychainService, keychainAccount } =
-		getPreferenceValues<TokenPreferences>();
+let resolvedToken: Promise<string> | undefined;
 
-	if (tokenSource === "keychain") {
-		const service = keychainService?.trim() || DEFAULT_SERVICE;
-		const account = keychainAccount?.trim() || undefined;
-		const fromKeychain = await readTokenFromKeychain(service, account);
-		if (!fromKeychain) {
+export function resolveVaultToken(): Promise<string> {
+	resolvedToken ??= (async () => {
+		const { tokenSource, token, keychainService, keychainAccount } =
+			getPreferenceValues<TokenPreferences>();
+
+		if (tokenSource === "keychain") {
+			const service = keychainService?.trim() || DEFAULT_SERVICE;
+			const account = keychainAccount?.trim() || undefined;
+			const fromKeychain = await readTokenFromKeychain(service, account);
+			if (!fromKeychain) {
+				throw new Error(
+					`Keychain item (service: "${service}") is empty. ${tokenSetupHint(service, account)}`,
+				);
+			}
+			return fromKeychain;
+		}
+
+		const fromPreferences = token?.trim() ?? "";
+		if (!fromPreferences) {
 			throw new Error(
-				`Keychain item (service: "${service}") is empty. ${tokenSetupHint(service, account)}`,
+				'No Vault token configured. Set the "Vault Token" preference or switch "Token Source" to "macOS Keychain".',
 			);
 		}
-		return fromKeychain;
-	}
-
-	const fromPreferences = token?.trim() ?? "";
-	if (!fromPreferences) {
-		throw new Error(
-			'No Vault token configured. Set the "Vault Token" preference or switch "Token Source" to "macOS Keychain".',
-		);
-	}
-	return fromPreferences;
+		return fromPreferences;
+	})();
+	return resolvedToken;
 }
